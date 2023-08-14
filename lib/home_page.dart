@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:weather_app/additional_info_item.dart';
+import 'package:weather_app/forecast_item_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -26,6 +28,7 @@ class _HomePageState extends State<HomePage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Main card
             SizedBox(
@@ -65,7 +68,53 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             // weather forecast card
+            const SizedBox(
+              height: 20,
+            ),
+            const Text(
+              'Weather Forecast',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 12,
+            ),
+            const SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  ForecastItemCard(
+                      time: '03:00', icon: Icons.cloud, temperature: '300'),
+                  ForecastItemCard(
+                      time: '03:00', icon: Icons.cloud, temperature: '300'),
+                  ForecastItemCard(
+                      time: '03:00', icon: Icons.cloud, temperature: '300'),
+                  ForecastItemCard(
+                      time: '03:00', icon: Icons.cloud, temperature: '300'),
+                  ForecastItemCard(
+                      time: '03:00', icon: Icons.cloud, temperature: '300'),
+                ],
+              ),
+            ),
             // Additional card
+            const SizedBox(height: 20),
+            const Text(
+              'Additional Information',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 12,
+            ),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                AdditionalInfoItem(
+                    icon: Icons.water_drop, lable: 'Humidity', value: '94'),
+                AdditionalInfoItem(
+                    icon: Icons.air, lable: 'Wind Speed', value: '7.64'),
+                AdditionalInfoItem(
+                    icon: Icons.beach_access, lable: 'Pressure', value: '1000'),
+              ],
+            ),
           ],
         ),
       ),
