@@ -46,15 +46,23 @@ class _HomePageState extends State<HomePage> {
         future: getWeatherData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            const Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
           if (snapshot.hasError) {
-            Center(
+            return Center(
               child: Text(snapshot.error.toString()),
             );
           }
+
+          final data = snapshot.data!;
+          final currentWeatherData = data['list'][0];
+          final currentTemp = currentWeatherData['main']['temp'] - 273.15;
+          final icon = currentWeatherData['weather'][0]['icon'];
+          final humidity = currentWeatherData['main']['humidity'];
+          final windSpeed = currentWeatherData['wind']['speed'];
+          final pressur = currentWeatherData['main']['pressure'];
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -76,14 +84,32 @@ class _HomePageState extends State<HomePage> {
                           child: Column(
                             children: [
                               Text(
-                                '300 K',
+                                '${currentTemp.toStringAsFixed(2)}° C',
                                 style: const TextStyle(
                                     fontSize: 32, fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 16),
-                              const Icon(
-                                Icons.cloud,
-                                size: 64,
+                              SizedBox(
+                                width: 100,
+                                height: 100,
+                                child: Image.network(
+                                  'https://openweathermap.org/img/w/$icon.png',
+                                  fit: BoxFit.cover,
+                                  width: 100,
+                                  loadingBuilder:
+                                      (context, child, loadingProgress) {
+                                    if (loadingProgress == null) {
+                                      return child;
+                                    }
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  },
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(Icons
+                                        .signal_wifi_connected_no_internet_4);
+                                  },
+                                ),
                               ),
                               const SizedBox(height: 16),
                               const Text(
@@ -134,16 +160,20 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(
                   height: 12,
                 ),
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     AdditionalInfoItem(
-                        icon: Icons.water_drop, lable: 'Humidity', value: '94'),
+                        icon: Icons.water_drop,
+                        lable: 'Humidity',
+                        value: humidity.toString()),
                     AdditionalInfoItem(
-                        icon: Icons.air, lable: 'Wind Speed', value: '7.64'),
+                        icon: Icons.air,
+                        lable: 'Wind Speed',
+                        value: windSpeed.toString()),
                     AdditionalInfoItem(
                         icon: Icons.beach_access,
-                        lable: 'Pressure',
+                        lable: pressur.toString(),
                         value: '1000'),
                   ],
                 ),
