@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:weather_app/additional_info_item.dart';
 import 'package:weather_app/forecast_item_card.dart';
 import 'package:http/http.dart' as http;
@@ -33,13 +34,18 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         title: const Text(
           'Weather App',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.refresh))
+          IconButton(
+              onPressed: () {
+                setState(() {});
+              },
+              icon: const Icon(Icons.refresh))
         ],
       ),
       body: FutureBuilder(
@@ -59,7 +65,7 @@ class _HomePageState extends State<HomePage> {
           final data = snapshot.data!;
           final currentWeatherData = data['list'][0];
           final currentTemp = currentWeatherData['main']['temp'] - 273.15;
-          final icon = currentWeatherData['weather'][0]['icon'];
+          final currentIcon = currentWeatherData['weather'][0]['icon'];
           final humidity = currentWeatherData['main']['humidity'];
           final windSpeed = currentWeatherData['wind']['speed'];
           final pressur = currentWeatherData['main']['pressure'];
@@ -93,7 +99,7 @@ class _HomePageState extends State<HomePage> {
                                 width: 100,
                                 height: 100,
                                 child: Image.network(
-                                  'https://openweathermap.org/img/w/$icon.png',
+                                  'https://openweathermap.org/img/w/$currentIcon.png',
                                   fit: BoxFit.cover,
                                   width: 100,
                                   loadingBuilder:
@@ -134,21 +140,39 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(
                   height: 12,
                 ),
-                const SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      ForecastItemCard(
-                          time: '03:00', icon: Icons.cloud, temperature: '300'),
-                      ForecastItemCard(
-                          time: '03:00', icon: Icons.cloud, temperature: '300'),
-                      ForecastItemCard(
-                          time: '03:00', icon: Icons.cloud, temperature: '300'),
-                      ForecastItemCard(
-                          time: '03:00', icon: Icons.cloud, temperature: '300'),
-                      ForecastItemCard(
-                          time: '03:00', icon: Icons.cloud, temperature: '300'),
-                    ],
+                // const SingleChildScrollView(
+                //   scrollDirection: Axis.horizontal,
+                //   child: Row(
+                //     children: [
+                //       ForecastItemCard(
+                //           time: '03:00', icon: Icons.cloud, temperature: '300'),
+                //       ForecastItemCard(
+                //           time: '03:00', icon: Icons.cloud, temperature: '300'),
+                //       ForecastItemCard(
+                //           time: '03:00', icon: Icons.cloud, temperature: '300'),
+                //       ForecastItemCard(
+                //           time: '03:00', icon: Icons.cloud, temperature: '300'),
+                //       ForecastItemCard(
+                //           time: '03:00', icon: Icons.cloud, temperature: '300'),
+                //     ],
+                //   ),
+                // ),
+
+                SizedBox(
+                  height: 150,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 6,
+                    itemBuilder: (context, index) {
+                      final forecastData = data['list'][index + 1];
+                      final temperature = forecastData['main']['temp'] - 273.15;
+                      String icon = forecastData['weather'][0]['icon'];
+                      final time = DateTime.parse(forecastData['dt_txt']);
+                      return ForecastItemCard(
+                          time: DateFormat.j().format(time).toString(),
+                          icon: icon,
+                          temperature: temperature.toStringAsFixed(2));
+                    },
                   ),
                 ),
                 // Additional card

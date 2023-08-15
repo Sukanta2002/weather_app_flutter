@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ForecastItemCard extends StatelessWidget {
   final String time;
-  final IconData icon;
+  final String icon;
   final String temperature;
   const ForecastItemCard(
       {super.key,
@@ -27,9 +27,24 @@ class ForecastItemCard extends StatelessWidget {
             const SizedBox(
               height: 8,
             ),
-            Icon(
-              icon,
-              size: 40,
+            SizedBox(
+              width: 50,
+              height: 50,
+              child: Image.network(
+                'https://openweathermap.org/img/w/$icon.png',
+                width: 50,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(Icons.signal_wifi_connected_no_internet_4);
+                },
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) {
+                    return child;
+                  }
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              ),
             ),
             const SizedBox(
               height: 8,
